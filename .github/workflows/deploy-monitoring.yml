@@ -43,5 +43,5 @@ jobs:
           key: ${{ secrets.AWS_PEM_FILE }}
           script: |
             cd /home/ubuntu/monitoring
-            docker compose pull
-            docker compose up -d
+            sudo docker compose pull
+            sudo docker compose up -d
