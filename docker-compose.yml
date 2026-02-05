@@ -1,12 +1,24 @@
 services:
+  prometheus-config:
+    image: alpine:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/templates/prometheus.yml:ro
+      - prometheus-config:/etc/prometheus
+    env_file:
+      - .env
+    command: |
+      sh -c "apk add --no-cache gettext && 
+             envsubst < /templates/prometheus.yml > /etc/prometheus/prometheus.yml"
+
   prometheus:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
+      - prometheus-config:/etc/prometheus:ro
+    depends_on:
+      prometheus-config:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   grafana:
@@ -22,3 +34,6 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+
+volumes:
+  prometheus-config:
