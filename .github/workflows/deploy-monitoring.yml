@@ -1,0 +1,47 @@
+name: Deploy grafana to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Copy file to ec2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          source: "grafana, prometheus, docker-compose.yml"
+          target: "/home/ubuntu/monitoring"
+
+      - name: Create .env to ec2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          script: |
+            cd /home/ubuntu/monitoring
+            
+            cat << 'EOF' > /home/ubuntu/monitoring/.env
+            ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
+            ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+            
+            EOF
+
+      - name: Run docker compose on ec2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          script: |
+            cd /home/ubuntu/monitoring
+            sudo docker compose pull
+            sudo docker compose up -d
