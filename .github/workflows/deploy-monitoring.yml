@@ -20,6 +20,21 @@ jobs:
           source: "grafana, prometheus, docker-compose.yml"
           target: "/home/ubuntu/monitoring"
 
+      - name: Create .env to ec2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          script: |
+            cd /home/ubuntu/monitoring
+            
+            cat << 'EOF' > /home/ubuntu/monitoring/.env
+            ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
+            ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+            
+            EOF
+
       - name: Run docker compose on ec2
         uses: appleboy/ssh-action@v1.0.3
         with:
