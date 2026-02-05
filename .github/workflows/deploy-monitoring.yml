@@ -17,8 +17,8 @@ jobs:
           host: ${{ secrets.MONITORING_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_PEM_FILE }}
-          source: "."
-          target: "/home/ubuntu"
+          source: "grafana, prometheus, docker-compose.yml"
+          target: "/home/ubuntu/monitoring"
 
       - name: Run docker compose on ec2
         uses: appleboy/ssh-action@v1.0.3
