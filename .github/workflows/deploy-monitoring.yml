@@ -1,0 +1,32 @@
+name: Deploy grafana to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Copy file to ec2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          source: "."
+          target: "/home/ubuntu"
+
+      - name: Run docker compose on ec2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MONITORING_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PEM_FILE }}
+          script: |
+            cd /home/ubuntu/monitoring
+            docker compose pull
+            docker compose up -d
