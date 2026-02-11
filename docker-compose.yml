@@ -13,10 +13,10 @@ services:
       - prometheus-config:/etc/prometheus
     env_file:
       - .env
-    entrypoint: ["/bin/sh", "-c"]
-    command: |
-      "apk add --no-cache gettext && 
-       envsubst < /templates/prometheus.yml > /etc/prometheus/prometheus.yml &&
+    entrypoint: /bin/sh -c
+    command: >
+      apk add --no-cache gettext &&
+      envsubst < /templates/prometheus.yml > /etc/prometheus/prometheus.yml
 
   prometheus:
     image: prom/prometheus:latest
