@@ -38,6 +38,10 @@ scrape_configs:
     static_configs:
       - targets: ["${CHAT_API}"]
 
-  - job_name: "node-exporter"
+  - job_name: "public ec2"
     static_configs:
       - targets: ["10.0.10.224:9100"]
+
+  - job_name: "private ec2"
+    static_configs:
+      - targets: [ "10.0.11.243:9100" ]
