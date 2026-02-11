@@ -40,16 +40,16 @@ scrape_configs:
 
   - job_name: "public ec2"
     static_configs:
-      - targets: ["10.0.10.224:9100"]
+      - targets: ["${PUBLIC_EC2}"]
 
   - job_name: "private ec2"
     static_configs:
-      - targets: ["10.0.11.243:9100"]
+      - targets: ["${PRIVATE_EC2}"]
 
   - job_name: "internal ec2"
     static_configs:
-      - targets: ["10.0.22.155:9100"]
+      - targets: ["${INTERNAL_EC2}"]
 
   - job_name: "monitoring ec2"
     static_configs:
-      - targets: ["10.0.20.13:9100"]
+      - targets: ["${MONITORING_EC2}"]
