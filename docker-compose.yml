@@ -7,14 +7,15 @@ services:
     restart: unless-stopped
 
   prometheus-init:
-    image: bash:latest
+    image: alpine:latest
     volumes:
       - ./prometheus/prometheus.yml:/templates/prometheus.yml:ro
       - prometheus-config:/etc/prometheus
     env_file:
       - .env
     command: >
-      sh -c "envsubst < /templates/prometheus.yml > /etc/prometheus/prometheus.yml"
+      sh -c "apk add --no-cache gettext && 
+             envsubst < /templates/prometheus.yml > /etc/prometheus/prometheus.yml"
 
   prometheus:
     image: prom/prometheus:latest
